@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Alina</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+:root{--bg:#07080b;--panel:#12141a;--line:#23262f;--text:#eceef3;--muted:#8b909c;--red:#ff3d54;--blue:#3d8bff}
+*{box-sizing:border-box;margin:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:-apple-system,"Segoe UI",Roboto,sans-serif}
+body{display:flex;flex-direction:column;padding-top:env(safe-area-inset-top,0px)}
+header{display:flex;align-items:center;gap:14px;padding:18px 20px 10px}
+.orb{width:46px;height:46px;border-radius:50%;background:conic-gradient(from 0deg,var(--red),#1a1d26,var(--blue),#1a1d26,var(--red));position:relative;animation:spin 8s linear infinite}
+.orb::after{content:"";position:absolute;inset:6px;border-radius:50%;background:var(--bg)}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.orb{animation:none}}
+header h1{font-size:20px;font-weight:600}
+header p{font-size:13px;color:var(--muted)}
+main{flex:1;overflow-y:auto;padding:10px 20px 20px}
+section{display:none}
+section.on{display:block}
+h2{font-size:17px;font-weight:600;margin-bottom:4px}
+.hint{font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.4}
+.cmd{display:flex;justify-content:space-between;align-items:center;width:100%;background:var(--panel);border:1px solid var(--line);color:var(--text);border-radius:12px;padding:14px 16px;margin-bottom:8px;font-size:15px;text-align:left}
+.cmd span{color:var(--muted);font-size:13px}
+textarea{width:100%;min-height:120px;background:var(--panel);border:1px solid var(--line);border-radius:12px;color:var(--text);padding:14px;font:inherit;font-size:15px;resize:vertical;margin-bottom:12px}
+textarea:focus{outline:2px solid var(--blue);outline-offset:1px}
+.go{width:100%;border:0;border-radius:12px;padding:15px;font-size:16px;font-weight:600;color:#fff;background:linear-gradient(90deg,var(--red),var(--blue))}
+button:active{opacity:.75}
+button:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+nav{display:flex;border-top:1px solid var(--line);background:var(--bg);padding-bottom:env(safe-area-inset-bottom,0px)}
+nav button{flex:1;background:none;border:0;color:var(--muted);padding:10px 0 12px;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:3px}
+nav button b{font-size:19px;font-weight:400}
+nav button.on{color:var(--text)}
+nav button.on b{filter:none}
+#toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:var(--panel);border:1px solid var(--line);padding:10px 16px;border-radius:20px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%}
+#toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <div class="orb"></div>
+  <div><h1>Alina</h1><p>Sardor paneli</p></div>
+</header>
+
+<main>
+  <section id="buyruqlar" class="on">
+    <h2>Buyruqlar</h2>
+    <p class="hint">Bosing, Alinaga yuboriladi.</p>
+    <button class="cmd" data-cmd="/start">/start <span>Boshlash</span></button>
+    <button class="cmd" data-cmd="/hisobot">/hisobot <span>Kunlik hisobot</span></button>
+    <button class="cmd" data-cmd="/rasm">/rasm <span>Rasm yaratish</span></button>
+    <button class="cmd" data-cmd="/video">/video <span>Video yaratish</span></button>
+    <button class="cmd" data-cmd="/pochta">/pochta <span>Yangi xatlar</span></button>
+    <button class="cmd" data-cmd="/instagram">/instagram <span>Instagram holati</span></button>
+  </section>
+
+  <section id="hisobot">
+    <h2>Hisobot</h2>
+    <p class="hint">Ob-havo, Instagram va pochta bo'yicha qisqa hisobot. Har kuni 7:00 da o'zi ham keladi.</p>
+    <button class="go" data-cmd="/hisobot">Hisobotni hozir olish</button>
+  </section>
+
+  <section id="rasm">
+    <h2>Rasm</h2>
+    <p class="hint">Qanday rasm kerakligini yozing.</p>
+    <textarea id="rasmText" placeholder="Masalan: zamonaviy villa fasadi, kechqurun yorug'lik bilan"></textarea>
+    <button class="go" data-kind="rasm" data-src="rasmText">Rasm yaratish</button>
+  </section>
+
+  <section id="video">
+    <h2>Video</h2>
+    <p class="hint">Video g'oyasini yozing. Salli tayyorlaydi.</p>
+    <textarea id="videoText" placeholder="Masalan: tiyaga ishlash jarayoni, 5 soniyalik kadr"></textarea>
+    <button class="go" data-kind="video" data-src="videoText">Video yaratish</button>
+  </section>
+
+  <section id="pochta">
+    <h2>Pochta</h2>
+    <p class="hint">Gmail'dagi yangi xatlarning qisqacha ro'yxati.</p>
+    <button class="go" data-cmd="/pochta">Yangi xatlarni ko'rish</button>
+  </section>
+
+  <section id="instagram">
+    <h2>Instagram</h2>
+    <p class="hint">@sifatli_fasad bo'yicha izoh va ko'rsatkichlar.</p>
+    <button class="go" data-cmd="/instagram">Instagram hisoboti</button>
+  </section>
+</main>
+
+<nav id="nav">
+  <button class="on" data-tab="buyruqlar"><b>⌘</b>Buyruqlar</button>
+  <button data-tab="hisobot"><b>▤</b>Hisobot</button>
+  <button data-tab="rasm"><b>▣</b>Rasm</button>
+  <button data-tab="video"><b>▶</b>Video</button>
+  <button data-tab="pochta"><b>✉</b>Pochta</button>
+  <button data-tab="instagram"><b>◎</b>Instagram</button>
+</nav>
+<div id="toast"></div>
+
+<script>
+const tg = window.Telegram && window.Telegram.WebApp;
+if (tg) { tg.ready(); tg.expand(); }
+
+function toast(t){
+  const el = document.getElementById('toast');
+  el.textContent = t; el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 2200);
+}
+
+function send(payload){
+  if (tg && tg.initData) {
+    tg.sendData(JSON.stringify(payload)); // Alinaga yuboradi va oynani yopadi
+  } else {
+    toast('Telegram ichida oching');
+  }
+}
+
+document.getElementById('nav').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  document.querySelectorAll('nav button').forEach(x=>x.classList.toggle('on', x===b));
+  document.querySelectorAll('section').forEach(s=>s.classList.toggle('on', s.id===b.dataset.tab));
+});
+
+document.querySelector('main').addEventListener('click', e=>{
+  const b = e.target.closest('button'); if(!b) return;
+  if (b.dataset.cmd) return send({cmd: b.dataset.cmd});
+  if (b.dataset.kind) {
+    const text = document.getElementById(b.dataset.src).value.trim();
+    if (!text) return toast('Avval matn yozing');
+    send({cmd: '/' + b.dataset.kind, text});
+  }
+});
+</script>
+</body>
+</html>
